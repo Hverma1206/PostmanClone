@@ -1,6 +1,6 @@
 # Postman akin assignment
 
-A feature-rich API client for testing and debugging web services, built with React and Node.js.
+Node Assignment for the role of Node.js Development Internship at Warewe Consultancy Private Limited
 
 ## Overview
 
