@@ -25,11 +25,9 @@ router.post('/send', async (req, res) => {
     const endTime = Date.now();
     const responseTime = endTime - startTime;
     
-    // Calculate response size
     const responseBodyString = JSON.stringify(response.data);
     const responseSize = new TextEncoder().encode(responseBodyString).length;
     
-    // Save request and response to database
     const requestEntity = new RequestEntity();
     requestEntity.method = method || 'GET';
     requestEntity.url = url;
@@ -54,7 +52,6 @@ router.post('/send', async (req, res) => {
     const endTime = Date.now();
     const responseTime = endTime - startTime;
     
-    // Even for errors, we store the request
     const requestEntity = new RequestEntity();
     requestEntity.method = method || 'GET';
     requestEntity.url = url;

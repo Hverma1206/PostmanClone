@@ -7,10 +7,12 @@ const RequestForm = () => {
   const [method, setMethod] = useState('GET');
   const [headers, setHeaders] = useState([{ key: '', value: '' }]);
   const [body, setBody] = useState('');
+  const [queryParams, setQueryParams] = useState([{ key: '', value: '' }]);
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [viewFormat, setViewFormat] = useState('json');
+  const [activeTab, setActiveTab] = useState('params'); // 'params', 'headers', or 'json'
   
   const location = useLocation();
   
@@ -31,6 +33,14 @@ const RequestForm = () => {
       if (body) {
         setBody(JSON.stringify(body, null, 2));
       }
+      
+      // Extract query parameters from URL
+      if (url && url.includes('?')) {
+        const queryString = url.split('?')[1];
+        const params = new URLSearchParams(queryString);
+        const paramPairs = Array.from(params.entries()).map(([key, value]) => ({ key, value }));
+        setQueryParams(paramPairs.length ? paramPairs : [{ key: '', value: '' }]);
+      }
     }
   }, [location.state]);
   
@@ -49,6 +59,44 @@ const RequestForm = () => {
     newHeaders[index] = { ...newHeaders[index], [field]: value };
     setHeaders(newHeaders);
   };
+  
+  const handleAddQueryParam = () => {
+    setQueryParams([...queryParams, { key: '', value: '' }]);
+  };
+  
+  const handleRemoveQueryParam = (index) => {
+    const newParams = [...queryParams];
+    newParams.splice(index, 1);
+    setQueryParams(newParams.length ? newParams : [{ key: '', value: '' }]);
+  };
+  
+  const handleQueryParamChange = (index, field, value) => {
+    const newParams = [...queryParams];
+    newParams[index] = { ...newParams[index], [field]: value };
+    setQueryParams(newParams);
+  };
+
+  const getFullUrl = () => {
+    // Start with the base URL
+    let fullUrl = url;
+    
+    // If there are query parameters and the URL doesn't already have a query string
+    const validParams = queryParams.filter(param => param.key.trim() !== '');
+    if (validParams.length > 0) {
+      // Check if the URL already contains a query string
+      const hasQueryString = url.includes('?');
+      
+      // Start or append to the query string
+      fullUrl += hasQueryString ? '&' : '?';
+      
+      // Add each valid query parameter
+      fullUrl += validParams
+        .map(param => `${encodeURIComponent(param.key)}=${encodeURIComponent(param.value)}`)
+        .join('&');
+    }
+    
+    return fullUrl;
+  };
 
   const handleUrlChange = (e) => {
     const input = e.target.value;
@@ -60,6 +108,8 @@ const RequestForm = () => {
     setLoading(true);
     setError(null);
     setResponse(null);
+    
+    const fullUrl = getFullUrl();
     
     try {
       const headersObj = headers.reduce((acc, { key, value }) => {
@@ -82,7 +132,7 @@ const RequestForm = () => {
       
       const response = await axios.post('/api/requests/send', {
         method,
-        url,
+        url: fullUrl,
         headers: headersObj,
         body: bodyData,
       });
@@ -110,7 +160,6 @@ const RequestForm = () => {
   
   // Function to render data as a table
   const renderTableView = (data) => {
-    // If data is not an object or array, or is empty, show a message
     if (!data || typeof data !== 'object' || Array.isArray(data) && data.length === 0) {
       return <div className="text-gray-500 italic">No structured data available for table view</div>;
     }
@@ -240,47 +289,129 @@ const RequestForm = () => {
           </button>
         </div>
         
-        {/* Headers Section */}
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-2">Headers</h3>
-          {headers.map((header, index) => (
-            <div key={index} className="flex mb-2">
-              <input
-                type="text"
-                value={header.key}
-                onChange={(e) => handleHeaderChange(index, 'key', e.target.value)}
-                placeholder="Key"
-                className="flex-1 p-2 border rounded-md mr-2"
-              />
-              <input
-                type="text"
-                value={header.value}
-                onChange={(e) => handleHeaderChange(index, 'value', e.target.value)}
-                placeholder="Value"
-                className="flex-1 p-2 border rounded-md mr-2"
-              />
+        {/* Tabs */}
+        <div className="border-b border-gray-200 mb-4">
+          <div className="flex space-x-4">
+            <button
+              type="button"
+              onClick={() => setActiveTab('params')}
+              className={`py-2 px-4 text-sm font-medium ${activeTab === 'params' 
+                ? 'border-b-2 border-blue-500 text-blue-600' 
+                : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+            >
+              Query Params
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('headers')}
+              className={`py-2 px-4 text-sm font-medium ${activeTab === 'headers' 
+                ? 'border-b-2 border-blue-500 text-blue-600' 
+                : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+            >
+              Headers
+            </button>
+            {method !== 'GET' && (
               <button
                 type="button"
-                onClick={() => handleRemoveHeader(index)}
-                className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                onClick={() => setActiveTab('json')}
+                className={`py-2 px-4 text-sm font-medium ${activeTab === 'json' 
+                  ? 'border-b-2 border-blue-500 text-blue-600' 
+                  : 'text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
               >
-                X
+                JSON
               </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={handleAddHeader}
-            className="bg-gray-200 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-300"
-          >
-            Add Header
-          </button>
+            )}
+          </div>
         </div>
         
-        {/* Request Body (not for GET) */}
-        {method !== 'GET' && (
+        {/* Query Parameters Section */}
+        {activeTab === 'params' && (
           <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-2">Request Body (JSON)</h3>
+            <div className="mb-2 flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Query Parameters</h3>
+              <button
+                type="button"
+                onClick={handleAddQueryParam}
+                className="bg-gray-200 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-300 text-sm"
+              >
+                Add Parameter
+              </button>
+            </div>
+            {queryParams.map((param, index) => (
+              <div key={index} className="flex mb-2">
+                <input
+                  type="text"
+                  value={param.key}
+                  onChange={(e) => handleQueryParamChange(index, 'key', e.target.value)}
+                  placeholder="Key"
+                  className="flex-1 p-2 border rounded-md mr-2"
+                />
+                <input
+                  type="text"
+                  value={param.value}
+                  onChange={(e) => handleQueryParamChange(index, 'value', e.target.value)}
+                  placeholder="Value"
+                  className="flex-1 p-2 border rounded-md mr-2"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveQueryParam(index)}
+                  className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {/* Headers Section */}
+        {activeTab === 'headers' && (
+          <div className="mb-4">
+            <div className="mb-2 flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Headers</h3>
+              <button
+                type="button"
+                onClick={handleAddHeader}
+                className="bg-gray-200 text-gray-800 px-3 py-1 rounded-md hover:bg-gray-300 text-sm"
+              >
+                Add Header
+              </button>
+            </div>
+            {headers.map((header, index) => (
+              <div key={index} className="flex mb-2">
+                <input
+                  type="text"
+                  value={header.key}
+                  onChange={(e) => handleHeaderChange(index, 'key', e.target.value)}
+                  placeholder="Key"
+                  className="flex-1 p-2 border rounded-md mr-2"
+                />
+                <input
+                  type="text"
+                  value={header.value}
+                  onChange={(e) => handleHeaderChange(index, 'value', e.target.value)}
+                  placeholder="Value"
+                  className="flex-1 p-2 border rounded-md mr-2"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveHeader(index)}
+                  className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600"
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {/* JSON Request Body (not for GET) */}
+        {method !== 'GET' && activeTab === 'json' && (
+          <div className="mb-4">
+            <div className="mb-2">
+              <h3 className="text-lg font-semibold">Request Body (JSON)</h3>
+            </div>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}

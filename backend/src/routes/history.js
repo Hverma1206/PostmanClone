@@ -14,7 +14,6 @@ router.get('/', async (req, res) => {
   try {
     const qb = req.em.createQueryBuilder(RequestEntity);
     
-    // Apply filters if provided
     if (searchTerm) {
       qb.where({ url: { $like: `%${searchTerm}%` } });
     }
@@ -23,10 +22,8 @@ router.get('/', async (req, res) => {
       qb.andWhere({ method });
     }
     
-    // Get total count for pagination
     const total = await qb.clone().count();
     
-    // Get paginated results
     const requests = await qb
       .orderBy({ createdAt: 'DESC' })
       .limit(limit)
