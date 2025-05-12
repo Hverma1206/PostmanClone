@@ -178,7 +178,7 @@ const RequestForm = () => {
         }
       }
       
-      const response = await axios.post('/api/requests/send', {
+      const response = await axios.post(`${process.env.BACKEND_ENDPOINT || ''}/api/requests/send`, {
         method,
         url: fullUrl,
         headers: headersObj,
