@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const RequestHistory = () => {
+const History = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -187,4 +187,4 @@ const RequestHistory = () => {
   );
 };
 
-export default RequestHistory;
+export default History;
