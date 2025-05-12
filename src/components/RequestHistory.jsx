@@ -84,7 +84,6 @@ const RequestHistory = () => {
           <option value="POST">POST</option>
           <option value="PUT">PUT</option>
           <option value="DELETE">DELETE</option>
-          <option value="PATCH">PATCH</option>
         </select>
         
         <button
@@ -135,7 +134,6 @@ const RequestHistory = () => {
                           ${request.method === 'POST' ? 'bg-green-100 text-green-800' : ''}
                           ${request.method === 'PUT' ? 'bg-yellow-100 text-yellow-800' : ''}
                           ${request.method === 'DELETE' ? 'bg-red-100 text-red-800' : ''}
-                          ${request.method === 'PATCH' ? 'bg-purple-100 text-purple-800' : ''}
                         `}>
                           {request.method}
                         </span>

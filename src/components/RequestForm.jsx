@@ -12,29 +12,24 @@ const RequestForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [viewFormat, setViewFormat] = useState('json');
-  const [activeTab, setActiveTab] = useState('params'); // 'params', 'headers', or 'json'
+  const [activeTab, setActiveTab] = useState('params'); 
   
   const location = useLocation();
   
-  // Check for request data in location state (when coming from history)
   useEffect(() => {
     if (location.state?.request) {
       const { method, url, headers, body } = location.state.request;
       setMethod(method);
-      setUrl(url);
       
-      // Convert headers object to array of key-value pairs
       if (headers) {
         const headerPairs = Object.entries(headers).map(([key, value]) => ({ key, value }));
         setHeaders(headerPairs.length ? headerPairs : [{ key: '', value: '' }]);
       }
       
-      // Set body if it exists
       if (body) {
         setBody(JSON.stringify(body, null, 2));
       }
       
-      // Extract query parameters from URL
       if (url && url.includes('?')) {
         const queryString = url.split('?')[1];
         const params = new URLSearchParams(queryString);
@@ -268,7 +263,6 @@ const RequestForm = () => {
             <option value="POST">POST</option>
             <option value="PUT">PUT</option>
             <option value="DELETE">DELETE</option>
-            <option value="PATCH">PATCH</option>
           </select>
           
           <input
@@ -310,7 +304,7 @@ const RequestForm = () => {
             >
               Headers
             </button>
-            {method !== 'GET' && (
+            {(method === 'POST' || method === 'PUT' || method === 'DELETE') && (
               <button
                 type="button"
                 onClick={() => setActiveTab('json')}
@@ -407,7 +401,7 @@ const RequestForm = () => {
         )}
         
         {/* JSON Request Body (not for GET) */}
-        {method !== 'GET' && activeTab === 'json' && (
+        {(method === 'POST' || method === 'PUT' || method === 'DELETE') && activeTab === 'json' && (
           <div className="mb-4">
             <div className="mb-2">
               <h3 className="text-lg font-semibold">Request Body (JSON)</h3>
