@@ -1,70 +1,115 @@
-# Getting Started with Create React App
+# Postman akin assignment
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A feature-rich API client for testing and debugging web services, built with React and Node.js.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+This project is a simplified clone of Postman that allows you to:
+- Send HTTP requests (GET, POST, PUT, DELETE)
+- Set request parameters (URL, headers, query params, JSON body)
+- View formatted responses
+- Save request history
 
-### `npm start`
+## Project Structure
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+assignment/
+├── src/                 # React frontend
+│   ├── components/      # UI components
+│   │   ├── headers.jsx  # Request headers component
+│   │   ├── jsonBody.jsx # JSON body editor
+│   │   ├── queryParams.jsx # Query parameters component
+│   │   ├── requests.jsx # Main request form component
+│   │   ├── response.jsx # Response display component
+│   │   ├── tabs.jsx     # Tab navigation component
+│   │   └── urlBar.jsx   # URL input component
+│   ├── App.js           # Main app component
+│   └── index.js         # React entry point
+├── backend/             # Node.js backend
+│   ├── src/             
+│   │   ├── models/    # Database models
+│   │   ├── routes/      # API endpoints
+│   │   └── orm-config.js # Database configuration
+│   ├── index.js         # Backend entry point
+│   └── db.js            # Database utilities
+└── .env                 # Environment variables
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features
 
-### `npm test`
+### Frontend
+- **Request Builder**: Create and configure HTTP requests
+- **Parameter Management**: Manage query parameters, headers, and JSON body
+- **Response Viewer**: Display formatted responses with syntax highlighting
+- **Table View**: View structured data in table format
+- **Request History**: Access previous requests
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Backend
+- **Request Proxy**: Forward client requests to target APIs
+- **Request History**: Store and retrieve request history
+- **Database**: SQLite storage for request data
 
-### `npm run build`
+## Technologies Used
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Frontend**:
+  - React
+  - React Router
+  - Axios
+  - Tailwind CSS
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Backend**:
+  - Express.js
+  - MikroORM
+  - SQLite
+  - Axios
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Setup and Installation
 
-### `npm run eject`
+### Frontend Setup
+1. Navigate to the project root directory
+```bash
+cd Postman-akin-Frontend
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. Install dependencies
+```bash
+npm install
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+3. Start the development server
+```bash
+npm start
+```
+The application will be available at http://localhost:3000
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Backend Setup
+1. Navigate to the backend directory
+```bash
+cd assignment/backend
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+2. Install dependencies
+```bash
+npm install
+```
 
-## Learn More
+3. Start the backend server
+```bash
+npm start
+```
+The API will be available at http://localhost:5000
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Environment Variables
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Create an `.env` file in the root directory with the following variables:
+```
+BACKEND_ENDPOINT=http://localhost:5000
+```
 
-### Code Splitting
+For production, set this to your deployed backend URL.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## API Routes
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `POST /api/requests/send`: Send HTTP requests to external APIs
+- `GET /api/history`: Get request history with pagination and filtering
+- `GET /api/history/:id`: Get details of a specific request

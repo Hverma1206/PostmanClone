@@ -1,5 +1,5 @@
 const { TsMorphMetadataProvider } = require('@mikro-orm/core');
-const { requestEntitySchema } = require('./entities/Request');
+const { requestEntitySchema } = require('./models/Request');
 
 const config = {
   type: 'sqlite',

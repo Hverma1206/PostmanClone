@@ -1,25 +1,22 @@
 const express = require('express');
 const axios = require('axios');
-const { RequestEntity } = require('../entities/Request');
+const { RequestEntity } = require('../models/Request');
 
 const router = express.Router();
 
 router.post('/send', async (req, res) => {
   const { method, url, headers, body } = req.body;
   
-  // Enhanced URL validation
   if (!url) {
     return res.status(400).json({ error: 'URL is required' });
   }
   
-  // Validate URL format
   try {
     new URL(url);
   } catch (error) {
     return res.status(400).json({ error: 'Invalid URL format' });
   }
   
-  // Validate HTTP method
   const validMethods = ['GET', 'POST', 'PUT', 'DELETE'];
   if (!validMethods.includes(method)) {
     return res.status(400).json({ error: 'Invalid HTTP method' });

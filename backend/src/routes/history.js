@@ -1,5 +1,5 @@
 const express = require('express');
-const { RequestEntity } = require('../entities/Request');
+const { RequestEntity } = require('../models/Request');
 
 const router = express.Router();
 
