@@ -9,15 +9,8 @@ const historyRoutes = require('./src/routes/history');
 const PORT = process.env.PORT || 5000;
 const app = express();
 
-// Replace this line:
 app.use(cors());
-
-// With this:
-app.use(cors({
-  origin: ['https://postman-akin-frontend.vercel.app/', 'http://localhost:3000'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
-}));
+app.use(express.json());
 
 (async () => {
   try {
