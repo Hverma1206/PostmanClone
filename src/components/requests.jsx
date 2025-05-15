@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 import ResponseDisplay from './response';
 import UrlBar from './urlBar';
 import Tabs from './tabs';
 import QueryParams from './queryParams';
 import Headers from './headers';
 import Json from './jsonBody';
-
 
 const RequestForm = () => {
   const [url, setUrl] = useState('');
@@ -178,7 +177,7 @@ const RequestForm = () => {
         }
       }
       
-      const response = await axios.post(`${process.env.BACKEND_ENDPOINT || ''}/api/requests/send`, {
+      const response = await api.post('/api/requests/send', {
         method,
         url: fullUrl,
         headers: headersObj,

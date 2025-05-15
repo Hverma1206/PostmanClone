@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 const History = () => {
   const [requests, setRequests] = useState([]);
@@ -19,7 +19,7 @@ const History = () => {
   const fetchHistory = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/api/history', {
+      const response = await api.get('/api/history', {
         params: {
           page: pagination.page,
           limit: pagination.limit,
