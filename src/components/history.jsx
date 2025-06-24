@@ -19,6 +19,7 @@ const History = () => {
   const fetchHistory = useCallback(async () => {
     setLoading(true);
     try {
+      console.log('Fetching history from:', api.defaults.baseURL + '/api/history');
       const response = await api.get('/api/history', {
         params: {
           page: pagination.page,
@@ -33,8 +34,8 @@ const History = () => {
         totalPages: response.data.pagination.totalPages,
       }));
     } catch (err) {
-      setError('Failed to load request history');
-      console.error(err);
+      console.error('Error details:', err);
+      setError(`Failed to load request history: ${err.message}${err.response ? ` (${err.response.status})` : ''}`);
     } finally {
       setLoading(false);
     }
