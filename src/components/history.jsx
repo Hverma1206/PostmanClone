@@ -104,7 +104,18 @@ const History = () => {
       
       {/* Loading State */}
       {loading ? (
-        <div className="text-center py-8">Loading...</div>
+<div className="text-center py-8">
+  <div className="inline-block">
+    <div className="mb-3">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+    </div>
+    <p className="font-medium text-gray-800">Loading...</p>
+    <p className="text-sm text-gray-500 max-w-md mx-auto mt-2">
+      The backend is hosted on Render's free tier which may take 50-60 seconds to wake up after inactivity.
+      Soon I'll migrate to AWS EC2.
+    </p>
+  </div>
+</div>      
       ) : (
         <>
           {/* Request List */}
